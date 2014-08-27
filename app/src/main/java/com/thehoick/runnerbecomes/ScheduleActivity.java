@@ -1,20 +1,16 @@
 package com.thehoick.runnerbecomes;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.CalendarView;
 import android.widget.Toast;
 
 import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.logging.Logger;
+
 
 import db.ScheduleDataSource;
 
@@ -36,15 +32,6 @@ public class ScheduleActivity extends Activity {
         startDate.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView calendarView, int i, int i2, int i3) {
-                /*Context context = getApplicationContext();
-                CharSequence text = "Calendar Clicked...";
-                int duration = Toast.LENGTH_SHORT;
-
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();*/
-
-                //Toast.makeText(getApplicationContext(),
-                //dayOfMonth +"/"+month+"/"+ year,Toast.LENGTH_LONG).show();}});
 
                 Toast.makeText(getApplicationContext(), "Day Changed...", Toast.LENGTH_LONG).show();
 
@@ -69,6 +56,15 @@ public class ScheduleActivity extends Activity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        Cursor cursor = mDataSource.selectAllSchedules();
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            int i = cursor.getColumnIndex("time");
+            Toast.makeText(getApplicationContext(), cursor.getString(i), Toast.LENGTH_LONG).show();
+            cursor.moveToNext();
+        }
     }
 
     @Override
@@ -91,9 +87,7 @@ public class ScheduleActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 }
