@@ -10,6 +10,14 @@
         <activity
             android:name=".ScheduleActivity"
             android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".RulesActivity"
+            android:label="@string/title_activity_overview" >
+        </activity>
+        <activity
+            android:name=".RunnerBecomesActivity"
+            android:label="@string/title_activity_runner_becomes" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
