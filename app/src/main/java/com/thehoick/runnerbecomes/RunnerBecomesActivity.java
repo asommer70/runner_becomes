@@ -7,21 +7,24 @@ import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.net.Uri;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
 import com.thehoick.runnerbecomes.R;
 
-public class RunnerBecomesActivity extends Activity implements ActionBar.TabListener {
+public class RunnerBecomesActivity extends Activity implements ActionBar.TabListener,
+        StepsFragment.OnFragmentInteractionListener,
+        RulesFragment.OnFragmentInteractionListener {
 
-    /**
+    /**d
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
      * {@link FragmentPagerAdapter} derivative, which will keep every
@@ -90,10 +93,7 @@ public class RunnerBecomesActivity extends Activity implements ActionBar.TabList
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -111,6 +111,23 @@ public class RunnerBecomesActivity extends Activity implements ActionBar.TabList
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri){
+        //Toast.makeText(this, thing, Toast.LENGTH_SHORT).show();
+        Log.d("RunnerBecomes", "uri: " + uri);
+    }
+
+    @Override
+    public void onFragmentInteraction(String string){
+        Log.d("RunerBecomes", "String thing: " + string);
+    }
+
+    public void OnFragmentInteractionListener() {
+        String things = "things";
+        onFragmentInteraction(Uri.EMPTY);
+    }
+
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -125,6 +142,23 @@ public class RunnerBecomesActivity extends Activity implements ActionBar.TabList
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
+
+
+            Log.d("RunnerBecomes", "position: " + position);
+
+            switch(position) {
+                case 0:
+                    return PlaceholderFragment.newInstance(position + 1);
+                    //return new StepsFragment();
+                case 1:
+                    return new StepsFragment();
+                case 2:
+                    return new RulesFragment();
+            }
+
+            //return new StepsFragment();
+            //return null;
+
             return PlaceholderFragment.newInstance(position + 1);
         }
 
@@ -177,9 +211,9 @@ public class RunnerBecomesActivity extends Activity implements ActionBar.TabList
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_runner_becomes, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_runner_becomes, container, false);
         }
     }
+
 
 }

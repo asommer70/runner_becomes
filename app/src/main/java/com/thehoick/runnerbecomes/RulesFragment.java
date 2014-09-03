@@ -1,23 +1,25 @@
 package com.thehoick.runnerbecomes;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.net.Uri;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link android.app.Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link StepsFragment.OnFragmentInteractionListener} interface
+ * {@link com.thehoick.runnerbecomes.RulesFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link StepsFragment#newInstance} factory method to
+ * Use the {@link com.thehoick.runnerbecomes.RulesFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class StepsFragment extends Fragment {
+public class RulesFragment extends Fragment {
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -25,15 +27,15 @@ public class StepsFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment StepsFragment.
+     * @return A new instance of fragment RulesFragment.
      */
-    public static StepsFragment newInstance() {
-        StepsFragment fragment = new StepsFragment();
+    public static RulesFragment newInstance() {
+        RulesFragment fragment = new RulesFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
-    public StepsFragment() {
+    public RulesFragment() {
         // Required empty public constructor
     }
 
@@ -46,7 +48,8 @@ public class StepsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_steps, container, false);
+        //Log.d("RunnerBecomes", "fragment_rules: " + R.layout.fragment_rules);
+        return inflater.inflate(R.layout.fragment_rules, container, false);
     }
 
     @Override
@@ -78,7 +81,7 @@ public class StepsFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(String things);
+        public void onFragmentInteraction(Uri uri);
     }
 
 }
