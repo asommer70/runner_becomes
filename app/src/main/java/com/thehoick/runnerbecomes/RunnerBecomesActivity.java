@@ -20,9 +20,12 @@ import android.view.ViewGroup;
 
 import com.thehoick.runnerbecomes.R;
 
+import db.ScheduleDataSource;
+
 public class RunnerBecomesActivity extends Activity implements ActionBar.TabListener,
-        StepsFragment.OnFragmentInteractionListener,
-        RulesFragment.OnFragmentInteractionListener {
+    StepsFragment.OnFragmentInteractionListener,
+    RulesFragment.OnFragmentInteractionListener,
+    ScheduleFragment.OnFragmentInteractionListener {
 
     /**d
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -148,8 +151,8 @@ public class RunnerBecomesActivity extends Activity implements ActionBar.TabList
 
             switch(position) {
                 case 0:
-                    return PlaceholderFragment.newInstance(position + 1);
-                    //return new StepsFragment();
+                    //return PlaceholderFragment.newInstance(position + 1);
+                    return new ScheduleFragment();
                 case 1:
                     return new StepsFragment();
                 case 2:
@@ -157,9 +160,9 @@ public class RunnerBecomesActivity extends Activity implements ActionBar.TabList
             }
 
             //return new StepsFragment();
-            //return null;
+            return null;
 
-            return PlaceholderFragment.newInstance(position + 1);
+            //return PlaceholderFragment.newInstance(position + 1);
         }
 
         @Override

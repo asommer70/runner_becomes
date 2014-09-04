@@ -20,5 +20,6 @@
     <string name="title_schedule">Schedule</string>
     <string name="title_steps">Steps</string>
     <string name="title_rules">Rules</string>
+    <string name="edit_schedule_label">Edit Schedule</string>
 
 </resources>

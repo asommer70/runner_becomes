@@ -1,0 +1,41 @@
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.thehoick.runnerbecomes.ScheduleFragment">
+
+
+    <TextView
+        android:text="@string/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="19sp"
+        android:id="@+id/textViewScheduleTitle" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/edit_schedule_label"
+        android:id="@+id/editSchedule"
+        android:layout_marginTop="50dp"
+        android:layout_below="@+id/textViewScheduleTitle"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/listViewWeeklySchedule"
+        android:layout_below="@+id/editSchedule"
+        android:layout_marginTop="39dp"
+        android:layout_alignRight="@+id/textViewScheduleTitle"
+        android:layout_alignEnd="@+id/textViewScheduleTitle"
+        android:layout_alignParentBottom="true" />
+
+
+</RelativeLayout>
