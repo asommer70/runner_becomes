@@ -1,11 +1,15 @@
 package com.thehoick.runnerbecomes;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +38,9 @@ public class ScheduleFragment extends Fragment {
     private String mParam2;
 
     private Activity mActivity = this.getActivity();
+    public Boolean mScheduled = null;
+    SharedPreferences mPrefs;
+    public static final String PREFS = "preferences.xml";
 
     private OnFragmentInteractionListener mListener;
 
@@ -65,6 +72,27 @@ public class ScheduleFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        // Check settings for Calendar events.
+        //SettingsFragment settings = new SettingsFragment();
+        //Preference pref = settings.findPreference("scheduled");
+        //Log.d("RunnerBecomes", pref.getKey());
+
+        PreferenceManager.setDefaultValues(this.getActivity(), R.xml.preferences, true);
+        SharedPreferences preferences = this.getActivity().getSharedPreferences("preferences.xml", Context.MODE_PRIVATE);
+
+            //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            //mScheduled = prefs.getBoolean("scheduled", true);
+
+        //mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        //mScheduled = mPrefs.getBoolean("scheduled", false);
+
+        // Restore preference
+        mScheduled = preferences.getBoolean("scheduled", mScheduled.getBoolean(""));
+
+
+        //SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        //Boolean scheduled = sharedPref.getBoolean(RunnerBecomesActivity.SCH);
     }
 
     @Override
@@ -73,10 +101,14 @@ public class ScheduleFragment extends Fragment {
 
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_schedule, container, false);
-
-
         final RelativeLayout mRelativeLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_schedule,
                 container, false);
+
+        // Change button text if there are no RunnerBecomes events.
+        if (!mScheduled) {
+            Button button = (Button) mRelativeLayout.findViewById(R.id.editSchedule);
+            button.setText("Add Schedule");
+        }
 
         Button mButton = (Button) mRelativeLayout.findViewById(R.id.editSchedule);
         mButton.setOnClickListener(new View.OnClickListener() {
@@ -84,8 +116,9 @@ public class ScheduleFragment extends Fragment {
             public void onClick(View v) {
                 // here you set what you want to do when user clicks your button,
                 // e.g. launch a new activity
-                Log.d("RunnerBecomes", "editSchedule clicked...");
+                Log.d("RunnerBecomes", "scheduled: " + mScheduled);
 
+                // Launch the ScheduleActivity.
                 Intent intent = new Intent(getActivity(), ScheduleActivity.class);
                 startActivity(intent);
             }

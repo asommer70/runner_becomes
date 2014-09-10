@@ -18,6 +18,9 @@ import db.ScheduleDataSource;
 public class ScheduleActivity extends Activity {
 
     protected ScheduleDataSource mDataSource;
+    public static int Year;
+    public static int Month;
+    public static int DayOfMonth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +34,12 @@ public class ScheduleActivity extends Activity {
 
         startDate.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
-            public void onSelectedDayChange(CalendarView calendarView, int i, int i2, int i3) {
+            public void onSelectedDayChange(CalendarView calendarView, int year, int month,
+                                            int dayOfMonth) {
 
+                Year = year;
+                Month = month;
+                DayOfMonth = dayOfMonth;
                 Toast.makeText(getApplicationContext(), "Day Changed...", Toast.LENGTH_LONG).show();
 
                 // Open a pick time dialog.

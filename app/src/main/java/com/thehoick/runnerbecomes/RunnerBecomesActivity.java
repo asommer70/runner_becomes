@@ -152,6 +152,11 @@ public class RunnerBecomesActivity extends Activity implements ActionBar.TabList
             switch(position) {
                 case 0:
                     //return PlaceholderFragment.newInstance(position + 1);
+
+                    //getFragmentManager().beginTransaction()
+                    //        .replace(android.R.id.content, new SettingsFragment())
+                    //        .commit();
+
                     return new ScheduleFragment();
                 case 1:
                     return new StepsFragment();
