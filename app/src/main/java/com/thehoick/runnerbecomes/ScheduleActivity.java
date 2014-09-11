@@ -1,15 +1,21 @@
 package com.thehoick.runnerbecomes;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CalendarView;
 import android.widget.Toast;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 
 import db.ScheduleDataSource;
@@ -21,6 +27,9 @@ public class ScheduleActivity extends Activity {
     public static int Year;
     public static int Month;
     public static int DayOfMonth;
+    protected String sDay;
+    protected String sMonth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +51,54 @@ public class ScheduleActivity extends Activity {
                 DayOfMonth = dayOfMonth;
                 Toast.makeText(getApplicationContext(), "Day Changed...", Toast.LENGTH_LONG).show();
 
-                // Open a pick time dialog.
-                DialogFragment newFragment = new RunDateTimePicker();
-                newFragment.show(getFragmentManager(), "timePicker");
+                // Figure out the number of days in the week and if there are not three enough days
+                // available ask to choose another week.
+                if (ScheduleActivity.DayOfMonth < 10) {
+                    sDay = "0" + DayOfMonth;
+                } else {
+                     sDay = DayOfMonth + "";
+                }
+
+                // Add 1 because month number starts at 0.
+                if (ScheduleActivity.Month < 10) {
+                    sMonth = "0" + (Month + 1);
+                } else {
+                    sMonth = (Month + 1) + "";
+                }
+
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                String dtStart = ScheduleActivity.Year + "-" + sMonth + "-" + sDay;
+                try {
+                    Date date = format.parse(dtStart);
+
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(date);
+                    int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+
+                    Log.i("RunerBecomes", dtStart);
+                    Log.i("RunnerBecomes", "dayOfWeek: " + dayOfWeek);
+
+                    if (dayOfWeek < 5) {
+                        // Open a pick time dialog.
+                        DialogFragment newFragment = new RunDateTimePicker();
+                        newFragment.show(getFragmentManager(), "timePicker");
+                    } else {
+                        // Create a dialog to inform about the need for at least 3 days of practice.
+                        AlertDialog.Builder builder = new AlertDialog.Builder(calendarView.getContext());
+                        builder.setMessage(R.string.too_late_message).setTitle(R.string.too_late_title);
+
+                        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User clicked OK button
+                            }
+                        });
+
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                } catch (Exception e) {
+                    Log.d("RunnerBecomes", e.getMessage());
+                }
 
                 // Save the date to SQLite3.
 

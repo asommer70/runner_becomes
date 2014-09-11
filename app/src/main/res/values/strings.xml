@@ -20,6 +20,8 @@
     <string name="title_schedule">Schedule</string>
     <string name="title_steps">Steps</string>
     <string name="title_rules">Rules</string>
-    <string name="edit_schedule_label">Edit Schedule</string>
+    <string name="add_schedule_label">Add Schedule</string>
+    <string name="too_late_title">Not Enough Days Left</string>
+    <string name="too_late_message">Please choose another day.\n\nIn order to form a running habit you need to practice at least <b>3</b> times a week.\n\nMaybe Monday of next week would be better?</string>
 
 </resources>
