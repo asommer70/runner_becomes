@@ -3,6 +3,7 @@ package com.thehoick.runnerbecomes;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -27,6 +28,8 @@ public class ScheduleActivity extends Activity {
     public static int Year;
     public static int Month;
     public static int DayOfMonth;
+    public static int WeekDaysLeft;
+    public static int DayOfWeek;
     protected String sDay;
     protected String sMonth;
 
@@ -73,19 +76,22 @@ public class ScheduleActivity extends Activity {
 
                     Calendar c = Calendar.getInstance();
                     c.setTime(date);
-                    int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+                    DayOfWeek = c.get(Calendar.DAY_OF_WEEK);
 
                     Log.i("RunerBecomes", dtStart);
-                    Log.i("RunnerBecomes", "dayOfWeek: " + dayOfWeek);
+                    Log.i("RunnerBecomes", "dayOfWeek: " + DayOfWeek);
 
-                    if (dayOfWeek < 5) {
+                    WeekDaysLeft = 7 - DayOfWeek;
+
+                    if (DayOfWeek <= 5) {
                         // Open a pick time dialog.
                         DialogFragment newFragment = new RunDateTimePicker();
                         newFragment.show(getFragmentManager(), "timePicker");
                     } else {
                         // Create a dialog to inform about the need for at least 3 days of practice.
                         AlertDialog.Builder builder = new AlertDialog.Builder(calendarView.getContext());
-                        builder.setMessage(R.string.too_late_message).setTitle(R.string.too_late_title);
+                        builder.setMessage(R.string.too_late_message)
+                                .setTitle(R.string.too_late_title);
 
                         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {

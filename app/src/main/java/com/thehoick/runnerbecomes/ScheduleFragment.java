@@ -105,9 +105,9 @@ public class ScheduleFragment extends Fragment {
                 container, false);
 
         // Change button text if there are no RunnerBecomes events.
-        if (!mScheduled) {
+        if (mScheduled) {
             Button button = (Button) mRelativeLayout.findViewById(R.id.editSchedule);
-            button.setText("Add Schedule");
+            button.setText("Edit Schedule");
         }
 
         Button mButton = (Button) mRelativeLayout.findViewById(R.id.editSchedule);
@@ -141,6 +141,7 @@ public class ScheduleFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
         try {
             mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {

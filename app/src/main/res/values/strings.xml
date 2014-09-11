@@ -6,22 +6,72 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_overview">Running Habit Detail</string>
     <string name="hello_world">Hello world!</string>
-    <string name="rule_one"><b><font size="18">1)</font></b> <b>Start small.</b> This is mandatory. Many people make the mistake of starting too hard, and they get burned out or injured or discouraged within a couple of weeks. This program is designed to get you running for life, so if you have lots of enthusiasm when you start, that’s great — but you MUST rein it in and start small. That enthusiasm that you have to hold back will keep you going for much longer if you don’t spend it all the first week.</string>
-    <string name="rule_two"><b><font size="18">2)</font></b> <b>Increase gradually.</b> Another mandatory rule. If you don’t follow this rule, you shouldn’t follow the program. Trust me, I know how it feels like the rules of increasing gradually don’t apply to you … I made that mistake when I started out and got injured. Your mind (and even your heart and lungs) might be able to handle doing more, but your legs might not. It takes awhile for your muscles and tendons and ligaments and joints to adjust to the stress of running, and if you progress to rapidly, you’ll get injured. Increase but very gradually.</string>
-    <string name="rule_three"><b><font size="18">3)</font></b> <b>Enjoy yourself.</b> Very mandatory. If you don’t enjoy yourself, you’ll never stick with it. So try to have as much fun as possible. Enjoy getting fit and healthy! Enjoy burning off your fat! Enjoy the sweat! Enjoy the relaxation of burning off stress! Running should be fun, not torture.</string>
-    <string name="rule_four"><b><font size="18">4)</font></b> <b>If you can, get a partner.</b> This is not really a rule but a suggestion — if you can find a reliable partner, it makes it a bit easier. First, having someone to talk to while you walk (and later run) makes the time go by extremely quickly. Second, if you make an appointment to meet that person for your walk (or run), you’re more likely to stick to the appointment rather than wimp out.</string>
+    <string name="rule_one"><b><font size="18">1)</font></b> <b>Start small.</b> This is mandatory.
+        Many people make the mistake of starting too hard, and they get burned out or injured or
+        discouraged within a couple of weeks. This program is designed to get you running for life,
+        so if you have lots of enthusiasm when you start, that’s great — but you MUST rein it in
+        and start small. That enthusiasm that you have to hold back will keep you going for much
+        longer if you don’t spend it all the first week.</string>
+    <string name="rule_two"><b><font size="18">2)</font></b> <b>Increase gradually.</b> Another
+        mandatory rule. If you don’t follow this rule, you shouldn’t follow the program. Trust me,
+        I know how it feels like the rules of increasing gradually don’t apply to you … I made that
+        mistake when I started out and got injured. Your mind (and even your heart and lungs) might
+        be able to handle doing more, but your legs might not. It takes awhile for your muscles and
+        tendons and ligaments and joints to adjust to the stress of running, and if you progress to
+        rapidly, you’ll get injured. Increase but very gradually.</string>
+    <string name="rule_three"><b><font size="18">3)</font></b> <b>Enjoy yourself.</b> Very
+        mandatory. If you don’t enjoy yourself, you’ll never stick with it. So try to have as much
+        fun as possible. Enjoy getting fit and healthy! Enjoy burning off your fat! Enjoy the
+        sweat! Enjoy the relaxation of burning off stress! Running should be fun, not torture.
+    </string>
+    <string name="rule_four"><b><font size="18">4)</font></b> <b>If you can, get a partner.</b>
+        This is not really a rule but a suggestion — if you can find a reliable partner, it makes
+        it a bit easier. First, having someone to talk to while you walk (and later run) makes the
+        time go by extremely quickly. Second, if you make an appointment to meet that person for
+        your walk (or run), you’re more likely to stick to the appointment rather than wimp out.
+    </string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="step_one"><b><font size="18">Step 1:</font></b> <b>Start walking.</b> Start out by walking just 3 times the first week, and four times the second. The first week, you only need to do 20-25 minutes. Increase to 25-30 minutes the second week. After this, you can graduate to the next step, or if you’d like to stay in this step for a week or two longer, that’s OK. If you stay longer, walk 4 times the third week, 30-35 minutes each time. The fourth week, stay at 4 times, but increase to 35-40 minutes.</string>
-    <string name="step_two"><b><font size="18">Step 2:</font></b> <b>Start run/walking.</b> Do this step very gradually, just a little more each time. For this step, you’ll continue to exercise 4 times a week. You want to warm up by walking for 10 minutes. Then do a very, very easy run/walk routine: jog lightly for 1 minute (or 30 seconds if that seems too hard), then walk for 2 minutes. Repeat these intervals for 10-15 minutes, then do a 10-minute walking cool down. Do this step for two weeks, or longer if you like.</string>
-    <string name="step_three"><b><font size="18">Step 3:</font></b> <b>Lengthen the running.</b> Once you’re comfortable running for a minute at a time, for several intervals each time you exercise, you’re ready to start running a little longer. Continue to exercise 4 times per week. Increase your running to 1 minute 30 seconds, with an equal walking (1:30 running, 1:30 walking) for 15 minutes. Do this a couple times or more, then increase running to two minutes, with walking for 1 minute. Do this a few times or more, then increase to running 2:30, walking 30 seconds to a minute. If any of these increases feels too hard, feel free to go back a step until you’re comfortable increasing. Don’t rush it. You should stay in this step for 2-3 weeks or more.</string>
-    <string name="step_four"><b><font size="18">Step 4:</font></b> <b>Follow the Rule of 9.</b> Once you start Step 3 above, you’re basically running with short walk breaks. This can seem difficult, but it’ll get easier. Commit to doing 9 running workouts in Step 3 … after that, it’ll get easier. The first 9 running workouts can be difficult, but after that, it almost always gets better and more enjoyable. Don’t quit before the 9 running workouts! After the 9, try running with only infrequent walk breaks.</string>
-    <string name="step_five"><b><font size="18">Step 5:</font></b> <b>Take your running to new levels.</b> First of all, celebrate! You’re now a runner. You might be walking a little during your runs, but there’s nothing wrong with that. In fact, feel free to keep doing walk breaks as you work on your running endurance. Some runners have been known to do a marathon with walk breaks, running 10 minutes and walking 1 minute. That’s completely fine. Eventually you probably won’t need the walk breaks, but no need to rush.</string>
+    <string name="step_one"><b><font size="18">Step 1:</font></b> <b>Start walking.</b> Start out
+        by walking just 3 times the first week, and four times the second. The first week, you only
+        need to do 20-25 minutes. Increase to 25-30 minutes the second week. After this, you can
+        graduate to the next step, or if you’d like to stay in this step for a week or two longer,
+        that’s OK. If you stay longer, walk 4 times the third week, 30-35 minutes each time. The
+        fourth week, stay at 4 times, but increase to 35-40 minutes.</string>
+    <string name="step_two"><b><font size="18">Step 2:</font></b> <b>Start run/walking.</b> Do this
+        step very gradually, just a little more each time. For this step, you’ll continue to
+        exercise 4 times a week. You want to warm up by walking for 10 minutes. Then do a very,
+        very easy run/walk routine: jog lightly for 1 minute (or 30 seconds if that seems too hard),
+        then walk for 2 minutes. Repeat these intervals for 10-15 minutes, then do a 10-minute
+        walking cool down. Do this step for two weeks, or longer if you like.</string>
+    <string name="step_three"><b><font size="18">Step 3:</font></b> <b>Lengthen the running.</b>
+        Once you’re comfortable running for a minute at a time, for several intervals each time you
+        exercise, you’re ready to start running a little longer. Continue to exercise 4 times per
+        week. Increase your running to 1 minute 30 seconds, with an equal walking (1:30 running,
+        1:30 walking) for 15 minutes. Do this a couple times or more, then increase running to
+        two minutes, with walking for 1 minute. Do this a few times or more, then increase to r
+        unning 2:30, walking 30 seconds to a minute. If any of these increases feels too hard, feel
+        free to go back a step until you’re comfortable increasing. Don’t rush it. You should stay
+        in this step for 2-3 weeks or more.</string>
+    <string name="step_four"><b><font size="18">Step 4:</font></b> <b>Follow the Rule of 9.</b>
+        Once you start Step 3 above, you’re basically running with short walk breaks. This can seem
+        difficult, but it’ll get easier. Commit to doing 9 running workouts in Step 3 … after that,
+        it’ll get easier. The first 9 running workouts can be difficult, but after that, it almost
+        always gets better and more enjoyable. Don’t quit before the 9 running workouts! After the
+        9, try running with only infrequent walk breaks.</string>
+    <string name="step_five"><b><font size="18">Step 5:</font></b> <b>Take your running to new
+        levels.</b> First of all, celebrate! You’re now a runner. You might be walking a little
+        during your runs, but there’s nothing wrong with that. In fact, feel free to keep doing
+        walk breaks as you work on your running endurance. Some runners have been known to do a
+        marathon with walk breaks, running 10 minutes and walking 1 minute. That’s completely fine.
+        Eventually you probably won’t need the walk breaks, but no need to rush.</string>
     <string name="title_activity_runner_becomes">Runner Becomes</string>
     <string name="title_schedule">Schedule</string>
     <string name="title_steps">Steps</string>
     <string name="title_rules">Rules</string>
     <string name="add_schedule_label">Add Schedule</string>
     <string name="too_late_title">Not Enough Days Left</string>
-    <string name="too_late_message">Please choose another day.\n\nIn order to form a running habit you need to practice at least <b>3</b> times a week.\n\nMaybe Monday of next week would be better?</string>
+    <string name="too_late_message">Please choose another day.\n\nIn order to form a running habit
+        you need to practice at least <b>3</b> times a week.\n\nMaybe Monday of next week would be
+        better?</string>
 
 </resources>
