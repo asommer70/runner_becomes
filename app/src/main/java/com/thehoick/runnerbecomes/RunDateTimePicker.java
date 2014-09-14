@@ -166,7 +166,9 @@ public class RunDateTimePicker extends DialogFragment
 
                 Log.i(TAG, "schedule preference: " + preferences.getBoolean("scheduled", false));*/
 
-                mDataSource.insertScheduleSetting("true");
+                if (! mDataSource.checkScheduled()) {
+                    mDataSource.insertScheduleSetting("true");
+                }
 
                 getActivity().finish();
             }

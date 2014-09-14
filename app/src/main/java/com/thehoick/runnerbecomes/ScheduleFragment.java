@@ -139,9 +139,15 @@ public class ScheduleFragment extends Fragment {
 
                 getActivity().setProgressBarIndeterminate(true);
 
-                // Launch the ScheduleActivity.
-                Intent intent = new Intent(getActivity(), ScheduleActivity.class);
-                startActivity(intent);
+                if (mScheduled) {
+                    Intent calIntent = new Intent(Intent.ACTION_MAIN);
+                    calIntent.addCategory(Intent.CATEGORY_APP_CALENDAR);
+                    startActivity(calIntent);
+                } else {
+                    // Launch the ScheduleActivity.
+                    Intent intent = new Intent(getActivity(), ScheduleActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
