@@ -35,11 +35,9 @@ import db.ScheduleHelper;
 public class RunDateTimePicker extends DialogFragment
         implements TimePickerDialog.OnTimeSetListener {
 
-    //protected ScheduleDataSource mDataSource;
-    //protected String mMonth;
-    //protected String mDayOfMonth;
+    public static final String TAG = RunDateTimePicker.class.getSimpleName();
+    protected ScheduleDataSource mDataSource;
 
-    @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current time as the default values for the picker
         final Calendar c = Calendar.getInstance();
@@ -56,17 +54,12 @@ public class RunDateTimePicker extends DialogFragment
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         // Do something with the time chosen by the user
         if (callCount == 1) {
-/*            mDataSource = new ScheduleDataSource(view.getContext());
+            mDataSource = new ScheduleDataSource(view.getContext());
             try {
                 mDataSource.open();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-
-            // Save Time to SQLite3.
-            mDataSource.insertTime(hourOfDay, minute);
-
-            mDataSource.close();*/
 
             int stepNumber = 1;
 
@@ -159,14 +152,21 @@ public class RunDateTimePicker extends DialogFragment
                 Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
 
                 long eventID = Long.parseLong(uri.getLastPathSegment());
-                Log.i("RunnerBecomes", "event id: " + eventID);
+                Log.i(TAG, "event id: " + eventID);
 
                 // Update the scheduled preference.
-                PreferenceManager.setDefaultValues(this.getActivity(), R.xml.preferences, true);
-                SharedPreferences preferences = this.getActivity().getSharedPreferences("preferences.xml", Context.MODE_PRIVATE);
+                //PreferenceManager.setDefaultValues(this.getActivity(), R.xml.preferences, true);
+                //SharedPreferences preferences = this.getActivity().getSharedPreferences("preferences", 0);
+                //SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+
+                /*SharedPreferences preferences = this.getActivity().getSharedPreferences("pref_general", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("schedule", true);
-                editor.commit();
+                editor.apply();
+
+                Log.i(TAG, "schedule preference: " + preferences.getBoolean("scheduled", false));*/
+
+                mDataSource.insertScheduleSetting("true");
 
                 getActivity().finish();
             }

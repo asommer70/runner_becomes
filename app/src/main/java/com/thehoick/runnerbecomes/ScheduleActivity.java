@@ -37,6 +37,7 @@ public class ScheduleActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setProgressBarIndeterminate(false);
         setContentView(R.layout.activity_schedule);
 
         mDataSource = new ScheduleDataSource(ScheduleActivity.this);
@@ -78,7 +79,7 @@ public class ScheduleActivity extends Activity {
                     c.setTime(date);
                     DayOfWeek = c.get(Calendar.DAY_OF_WEEK);
 
-                    Log.i("RunerBecomes", dtStart);
+                    Log.i("RunnerBecomes", dtStart);
                     Log.i("RunnerBecomes", "dayOfWeek: " + DayOfWeek);
 
                     WeekDaysLeft = 7 - DayOfWeek;

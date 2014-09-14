@@ -17,6 +17,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import java.sql.SQLException;
+
+import db.ScheduleDataSource;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,6 +47,7 @@ public class ScheduleFragment extends Fragment {
     public static final String PREFS = "preferences.xml";
 
     private OnFragmentInteractionListener mListener;
+    protected ScheduleDataSource mDataSource;
 
     /**
      * Use this factory method to create a new instance of
@@ -78,8 +83,7 @@ public class ScheduleFragment extends Fragment {
         //Preference pref = settings.findPreference("scheduled");
         //Log.d("RunnerBecomes", pref.getKey());
 
-        PreferenceManager.setDefaultValues(this.getActivity(), R.xml.preferences, true);
-        SharedPreferences preferences = this.getActivity().getSharedPreferences("preferences.xml", Context.MODE_PRIVATE);
+        //PreferenceManager.setDefaultValues(this.getActivity(), R.xml.preferences, true);
 
             //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             //mScheduled = prefs.getBoolean("scheduled", true);
@@ -88,7 +92,8 @@ public class ScheduleFragment extends Fragment {
         //mScheduled = mPrefs.getBoolean("scheduled", false);
 
         // Restore preference
-        mScheduled = preferences.getBoolean("scheduled", mScheduled.getBoolean(""));
+        //mScheduled = preferences.getBoolean("scheduled", mScheduled.getBoolean(""));
+
 
 
         //SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -104,19 +109,35 @@ public class ScheduleFragment extends Fragment {
         final RelativeLayout mRelativeLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_schedule,
                 container, false);
 
+        SharedPreferences preferences = this.getActivity().getSharedPreferences("pref_general", Context.MODE_PRIVATE);
+        //SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+        //mScheduled = preferences.getBoolean("scheduled", false);
+        mDataSource = new ScheduleDataSource(getActivity().getBaseContext());
+        try {
+            mDataSource.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Save Time to SQLite3.
+        mScheduled = mDataSource.checkScheduled();
+
+        mDataSource.close();
+
         // Change button text if there are no RunnerBecomes events.
+        Button button = (Button) mRelativeLayout.findViewById(R.id.editSchedule);
         if (mScheduled) {
-            Button button = (Button) mRelativeLayout.findViewById(R.id.editSchedule);
             button.setText("Edit Schedule");
         }
 
-        Button mButton = (Button) mRelativeLayout.findViewById(R.id.editSchedule);
-        mButton.setOnClickListener(new View.OnClickListener() {
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // here you set what you want to do when user clicks your button,
                 // e.g. launch a new activity
                 Log.d("RunnerBecomes", "scheduled: " + mScheduled);
+
+                getActivity().setProgressBarIndeterminate(true);
 
                 // Launch the ScheduleActivity.
                 Intent intent = new Intent(getActivity(), ScheduleActivity.class);
@@ -126,6 +147,19 @@ public class ScheduleFragment extends Fragment {
 
         // after you've done all your manipulation, return your layout to be shown
         return mRelativeLayout;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i("RunnerBecomes", "Resume ScheduleFragment");
+        // Change button text if there are no RunnerBecomes events.
+        Log.i("RunnerBecomes", "mScheduled: " + mScheduled);
+        if (mScheduled) {
+            Button button = (Button) getView().findViewById(R.id.editSchedule);
+            button.setText("Edit Schedule");
+        }
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

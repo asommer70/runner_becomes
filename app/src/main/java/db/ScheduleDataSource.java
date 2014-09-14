@@ -47,6 +47,33 @@ public class ScheduleDataSource {
         );
     }
 
+    public boolean checkScheduled() {
+        Cursor cursor = mDB.query(
+                ScheduleHelper.TABLE_SETTINGS,
+                new String[] {"name", "value"},
+                "name = 'scheduled'",
+                null,
+                null,
+                null,
+                null
+        );
+        String scheduled = "false";
+        cursor.moveToFirst();
+        while( !cursor.isAfterLast() ) {
+            // do stuff
+            int i = cursor.getColumnIndex("value");
+            //Log.i("RunnerBecomes", "value index: " + i);
+            scheduled = cursor.getString(i);
+            cursor.moveToNext();
+        }
+
+        if (scheduled.equals("true")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // Insert data to database.
     public void insertTime(int hour, int minute){
         Log.d("RunnerBecomes", "time = " + hour + ":" + minute);
@@ -58,6 +85,14 @@ public class ScheduleDataSource {
 
         mDB.insert(ScheduleHelper.TABLE_SCHEDULES, null, values);
 
+    }
+
+    public void insertScheduleSetting(String value){
+        ContentValues values = new ContentValues();
+        values.put("name", "scheduled");
+        values.put("value", value);
+
+        mDB.insert(ScheduleHelper.TABLE_SETTINGS, null, values);
     }
 
     // Update data in database.
