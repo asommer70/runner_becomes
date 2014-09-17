@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -24,7 +25,7 @@ import db.ScheduleDataSource;
 
 public class ScheduleActivity extends Activity {
 
-    protected ScheduleDataSource mDataSource;
+    //protected ScheduleDataSource mDataSource;
     public static int Year;
     public static int Month;
     public static int DayOfMonth;
@@ -33,16 +34,15 @@ public class ScheduleActivity extends Activity {
     protected String sDay;
     protected String sMonth;
 
+    public static final String TAG = RunDateTimePicker.class.getSimpleName();
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setProgressBarIndeterminate(false);
         setContentView(R.layout.activity_schedule);
 
-        mDataSource = new ScheduleDataSource(ScheduleActivity.this);
+        //mDataSource = new ScheduleDataSource(ScheduleActivity.this);
 
-        // Setup variables and assing them.
         final CalendarView startDate = (CalendarView) findViewById(R.id.scheduleStartDate);
 
         startDate.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
@@ -79,8 +79,20 @@ public class ScheduleActivity extends Activity {
                     c.setTime(date);
                     DayOfWeek = c.get(Calendar.DAY_OF_WEEK);
 
-                    Log.i("RunnerBecomes", dtStart);
-                    Log.i("RunnerBecomes", "dayOfWeek: " + DayOfWeek);
+                    // Week 2 just do Mon, Wed, Fri.
+                    // Get start of week 2.
+                    if (DayOfWeek != 2) {
+                        int days = (7 - DayOfWeek + 2) % 7;
+                        c.add(Calendar.DAY_OF_YEAR, days);
+                    } else {
+                      c.add(Calendar.DAY_OF_YEAR, 7);
+                    }
+
+                    Log.i(TAG, "next Monday: " + new SimpleDateFormat("yyyy-MM-dd").format(c.getTime()));
+
+
+                    //Log.i(TAG, dtStart);
+                    Log.i(TAG, "dayOfWeek: " + DayOfWeek);
 
                     WeekDaysLeft = 7 - DayOfWeek;
 
@@ -106,11 +118,6 @@ public class ScheduleActivity extends Activity {
                 } catch (Exception e) {
                     Log.d("RunnerBecomes", e.getMessage());
                 }
-
-                // Save the date to SQLite3.
-
-                // Change the start date display style.
-                //startDate.setSelectedWeekBackgroundColor(0x68965B);
             }
         });
 
@@ -119,7 +126,7 @@ public class ScheduleActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        try {
+        /*try {
             mDataSource.open();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -132,14 +139,14 @@ public class ScheduleActivity extends Activity {
             int i = cursor.getColumnIndex("time");
             Toast.makeText(getApplicationContext(), cursor.getString(i), Toast.LENGTH_LONG).show();
             cursor.moveToNext();
-        }
+        }*/
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        mDataSource.close();
+        //mDataSource.close();
     }
 
     @Override

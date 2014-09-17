@@ -1,21 +1,27 @@
 package com.thehoick.runnerbecomes;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.sql.SQLException;
 
@@ -48,6 +54,8 @@ public class ScheduleFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     protected ScheduleDataSource mDataSource;
+
+    public static final String TAG = ScheduleFragment.class.getSimpleName();
 
     /**
      * Use this factory method to create a new instance of
@@ -126,8 +134,11 @@ public class ScheduleFragment extends Fragment {
 
         // Change button text if there are no RunnerBecomes events.
         Button button = (Button) mRelativeLayout.findViewById(R.id.editSchedule);
+        Button removeScheduleButton = (Button) mRelativeLayout.findViewById(R.id.removeSchedule);
+        removeScheduleButton.setVisibility(View.INVISIBLE);
         if (mScheduled) {
             button.setText("Edit Schedule");
+            removeScheduleButton.setVisibility(View.VISIBLE);
         }
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -148,6 +159,45 @@ public class ScheduleFragment extends Fragment {
                     Intent intent = new Intent(getActivity(), ScheduleActivity.class);
                     startActivity(intent);
                 }
+            }
+        });
+
+        removeScheduleButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                // Find and remove all events.
+                // Might just get the event IDs from the SQLite database.
+
+                mDataSource = new ScheduleDataSource(getActivity().getBaseContext());
+                try {
+                    mDataSource.open();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                // Save Time to SQLite3.
+                Cursor cursor = mDataSource.selectAllSchedules();
+
+                cursor.moveToFirst();
+                while( !cursor.isAfterLast() ) {
+                    // do stuff
+                    int i = cursor.getColumnIndex("event_id");
+                    //Log.i("RunnerBecomes", "value index: " + i);
+                    int eventID = cursor.getInt(i);
+
+                    ContentResolver cr = getActivity().getContentResolver();
+                    ContentValues values = new ContentValues();
+                    Uri deleteUri = null;
+                    deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventID);
+                    int rows = getActivity().getContentResolver().delete(deleteUri, null, null);
+                    Log.i(TAG, "Rows deleted: " + rows);
+
+                    cursor.moveToNext();
+                }
+
+                Toast.makeText(getActivity().getBaseContext(), "Deleted " + cursor.getCount() +
+                        "Events", Toast.LENGTH_LONG).show();
+
             }
         });
 

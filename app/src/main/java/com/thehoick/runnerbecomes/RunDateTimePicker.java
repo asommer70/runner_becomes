@@ -37,6 +37,8 @@ public class RunDateTimePicker extends DialogFragment
 
     public static final String TAG = RunDateTimePicker.class.getSimpleName();
     protected ScheduleDataSource mDataSource;
+    protected static Calendar beginTime = Calendar.getInstance();
+    protected static List<Integer> daysOfMonth = new ArrayList<Integer>();
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current time as the default values for the picker
@@ -73,33 +75,20 @@ public class RunDateTimePicker extends DialogFragment
             // Setup spacing of run days.
             // Sunday = 1;
             // Thursday = 5;
-            List<Integer> days = new ArrayList<Integer>();
-            List<Integer> daysOfMonth = new ArrayList<Integer>();
+
             if (ScheduleActivity.DayOfWeek == 2) {
-                days.add(2);
-                days.add(4);
-                days.add(6);
                 daysOfMonth.add(ScheduleActivity.DayOfMonth);
                 daysOfMonth.add(ScheduleActivity.DayOfMonth + 2);
                 daysOfMonth.add(ScheduleActivity.DayOfMonth + 4);
             } else if (ScheduleActivity.DayOfWeek == 3) {
-                days.add(3);
-                days.add(5);
-                days.add(6);
                 daysOfMonth.add(ScheduleActivity.DayOfMonth);
                 daysOfMonth.add(ScheduleActivity.DayOfMonth + 2);
                 daysOfMonth.add(ScheduleActivity.DayOfMonth + 3);
             } else if (ScheduleActivity.DayOfWeek == 4) {
-                days.add(4);
-                days.add(5);
-                days.add(6);
                 daysOfMonth.add(ScheduleActivity.DayOfMonth);
                 daysOfMonth.add(ScheduleActivity.DayOfMonth + 1);
                 daysOfMonth.add(ScheduleActivity.DayOfMonth + 2);
             } else if (ScheduleActivity.DayOfWeek == 5) {
-                days.add(5);
-                days.add(6);
-                days.add(7);
                 daysOfMonth.add(ScheduleActivity.DayOfMonth);
                 daysOfMonth.add(ScheduleActivity.DayOfMonth + 1);
                 daysOfMonth.add(ScheduleActivity.DayOfMonth + 2);
@@ -107,28 +96,15 @@ public class RunDateTimePicker extends DialogFragment
             // Convert the day of week spacing to actual dates based on the
             // ScheduleActivity.DayOfMonth attribute.
 
+            EventHelper.getMonday(ScheduleActivity.DayOfWeek, beginTime);
+            EventHelper.buildList(3, beginTime);
+            daysOfMonth.addAll(EventHelper.runDays);
 
             // Create Calendar events.
             // Might move this into it's own method.
-            Calendar beginTime = Calendar.getInstance();
+
 
             for (int i = 0; i < daysOfMonth.size(); i++) {
-                /*beginTime.set(ScheduleActivity.Year, ScheduleActivity.Month,
-                        daysOfMonth.get(i), hourOfDay, minute, 0);
-                Calendar endTime = Calendar.getInstance();
-                endTime.set(ScheduleActivity.Year, ScheduleActivity.Month, daysOfMonth.get(i),
-                        hourOfDay, minute + 25, 0);
-                Intent intent = new Intent(Intent.ACTION_INSERT)
-                        .setData(CalendarContract.Events.CONTENT_URI)
-                        .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTime.getTimeInMillis())
-                        .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime.getTimeInMillis())
-                        .putExtra(CalendarContract.Events.TITLE, "[RunnerBecomes] Run Time")
-                        .putExtra(CalendarContract.Events.DESCRIPTION, "[Step " + stepNumber +
-                                "]\nTime to Run!")
-                        .putExtra(CalendarContract.Events.EVENT_LOCATION, "")
-                        .putExtra(CalendarContract.Events.AVAILABILITY,
-                                CalendarContract.Events.AVAILABILITY_BUSY);
-                startActivity(intent);*/
                 long calID = 1;
                 long startMillis = 0;
                 long endMillis = 0;
@@ -152,6 +128,8 @@ public class RunDateTimePicker extends DialogFragment
                 Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
 
                 long eventID = Long.parseLong(uri.getLastPathSegment());
+
+                // Save the eventIDs into the SQLite db.
                 Log.i(TAG, "event id: " + eventID);
 
                 // Update the scheduled preference.
@@ -170,14 +148,20 @@ public class RunDateTimePicker extends DialogFragment
                     mDataSource.insertScheduleSetting("true");
                 }
 
-                getActivity().finish();
+                mDataSource.insertEvent(
+                        hourOfDay - 1,
+                        minute,
+                        new SimpleDateFormat("yyyy-MM-dd").format(beginTime.getTime()),
+                        eventID
+                );
             }
 
             // Set alarm as well as calendar notification.
 
             // Populate the whole program.
 
-
+            mDataSource.close();
+            getActivity().finish();
         }
 
         callCount++; // Increment Call count cause I guess it's called twice for some reason.

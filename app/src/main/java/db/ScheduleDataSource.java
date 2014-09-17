@@ -38,7 +38,7 @@ public class ScheduleDataSource {
     public Cursor selectAllSchedules() {
         return mDB.query(
                 ScheduleHelper.TABLE_SCHEDULES, //table
-                new String[] {"time", "date"},  //columns
+                new String[] {"time", "date", "event_id"},  //columns
                 null,                           //where clause
                 null,                           //where parameters
                 null,                           //group by
@@ -75,13 +75,15 @@ public class ScheduleDataSource {
     }
 
     // Insert data to database.
-    public void insertTime(int hour, int minute){
+    public void insertEvent(int hour, int minute, String date, long eventId){
         Log.d("RunnerBecomes", "time = " + hour + ":" + minute);
 
         ContentValues values = new ContentValues();
         String time = hour + ":" + minute;
         values.put("time", time);
+        values.put("date", date);
         values.put("type", "main");
+        values.put("event_id", eventId);
 
         mDB.insert(ScheduleHelper.TABLE_SCHEDULES, null, values);
 
@@ -96,7 +98,7 @@ public class ScheduleDataSource {
     }
 
     // Update data in database.
-    public int udpateTime(String newTime) {
+    public int updateTime(String newTime) {
         ContentValues values = new ContentValues();
         values.put("time", newTime);
         return mDB.update(
