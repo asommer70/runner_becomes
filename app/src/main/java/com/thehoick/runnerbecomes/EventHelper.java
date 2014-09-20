@@ -1,5 +1,7 @@
 package com.thehoick.runnerbecomes;
 
+import android.util.Log;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -9,8 +11,9 @@ import java.util.List;
 
 public class EventHelper {
 
+    public static final String TAG = EventHelper.class.getSimpleName();
     public static int DayOfWeek;
-    public static List<Integer> runDays = new ArrayList<Integer>();
+    public static List<Calendar> runDays = new ArrayList<Calendar>();
 
     public static void main(String[] args) {
         // write your code here
@@ -45,67 +48,65 @@ public class EventHelper {
             c.setTime(date);
             DayOfWeek = c.get(Calendar.DAY_OF_WEEK);
 
-            c = getMonday(DayOfWeek, c);
-            buildList(3, c);
+            c = getMonday(c);
+            buildListStepOne(c);
 
         }  catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
-        System.out.print("\n");
-        System.out.print("\n");
-        for (int i = 0; i < runDays.size(); i++) {
-            System.out.println(runDays.get(i));
+            Log.i(TAG, e.getMessage());
         }
     }
 
-    protected static Calendar getMonday(int dayOfWeek, Calendar c) {
-        // Get start of week.
-        if (dayOfWeek != 2) {
-            int days = (7 - dayOfWeek + 2) % 7;
-            c.add(Calendar.DAY_OF_YEAR, days);
-        } else {
-            c.add(Calendar.DAY_OF_YEAR, 7);
-        }
+    protected static Calendar getMonday(Calendar c) {
+
 
         return c;
     }
 
-    protected static void buildList(int weeks, Calendar c) {
-        System.out.println("buldList weeks: " + weeks);
+    protected static void buildListStepOne(Calendar c) {
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
 
-        System.out.println("Week 2 Monday: " + new SimpleDateFormat("yyyy-MM-dd")
-                .format(c.getTime()));
-        System.out.println("Week 2 Monday int: " + c.get(Calendar.DAY_OF_MONTH));
-        runDays.add(c.get(Calendar.DAY_OF_MONTH));
-
-        c.add(Calendar.DAY_OF_MONTH, 2);
-        runDays.add(c.get(Calendar.DAY_OF_MONTH));
-        System.out.println("Week 2 Wednesday int: " + c.get(Calendar.DAY_OF_MONTH));
-
-        c.add(Calendar.DAY_OF_MONTH, 2);
-        runDays.add(c.get(Calendar.DAY_OF_MONTH));
-        System.out.println("Week 2 Friday int: " + c.get(Calendar.DAY_OF_MONTH));
-        System.out.print("\n");
-
-        for (int i = 1; i < weeks; i++) {
-            // Add day numbers to the list.
-            c.add(Calendar.DAY_OF_MONTH, 3);
-            runDays.add(c.get(Calendar.DAY_OF_MONTH));
-            System.out.println("Week " + i +  " Monday: " + new SimpleDateFormat("yyyy-MM-dd")
-                    .format(c.getTime()));
-            System.out.println("Week " + i + " Monday int: " + c.get(Calendar.DAY_OF_MONTH));
-
-            c.add(Calendar.DAY_OF_MONTH, 2);
-            runDays.add(c.get(Calendar.DAY_OF_MONTH));
-            System.out.println("Week " + i + " Wednesday int: " + c.get(Calendar.DAY_OF_MONTH));
-
-            c.add(Calendar.DAY_OF_MONTH, 2);
-            runDays.add(c.get(Calendar.DAY_OF_MONTH));
-            System.out.println("Week " + i + " Friday int: " + c.get(Calendar.DAY_OF_MONTH));
-            System.out.print("\n");
-
+        // Get start of week.
+        if (dayOfWeek != 2) {
+            int days = (7 - dayOfWeek + 2) % 7;
+            c.add(Calendar.DAY_OF_YEAR, days);
+        } else if (dayOfWeek == 6) {
+            c.add(Calendar.DAY_OF_YEAR, 3);
         }
+
+        // Week 2
+        runDays.add((Calendar) c.clone()); // Mon
+
+        c.add(Calendar.DAY_OF_MONTH, 2);
+        runDays.add((Calendar) c.clone()); // Wed
+
+        c.add(Calendar.DAY_OF_MONTH, 2);
+        runDays.add((Calendar) c.clone()); // Fri
+
+        // Week 3
+        c.add(Calendar.DAY_OF_MONTH, 3);
+        runDays.add((Calendar) c.clone()); // Mon
+
+        c.add(Calendar.DAY_OF_MONTH, 1);
+        runDays.add((Calendar) c.clone()); // Tues
+
+        c.add(Calendar.DAY_OF_MONTH, 2);
+        runDays.add((Calendar) c.clone()); // Thurs
+
+        c.add(Calendar.DAY_OF_MONTH, 1);
+        runDays.add((Calendar) c.clone()); // Fri
+
+        // Week 4
+        c.add(Calendar.DAY_OF_MONTH, 3);
+        runDays.add((Calendar) c.clone()); // Mon
+
+        c.add(Calendar.DAY_OF_MONTH, 1);
+        runDays.add((Calendar) c.clone()); // Tues
+
+        c.add(Calendar.DAY_OF_MONTH, 2);
+        runDays.add((Calendar) c.clone()); // Thurs
+
+        c.add(Calendar.DAY_OF_MONTH, 1); // Fri
+        runDays.add((Calendar) c.clone());
 
     }
 

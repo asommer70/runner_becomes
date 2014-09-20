@@ -174,29 +174,25 @@ public class ScheduleFragment extends Fragment {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-
-                // Save Time to SQLite3.
                 Cursor cursor = mDataSource.selectAllSchedules();
 
                 cursor.moveToFirst();
                 while( !cursor.isAfterLast() ) {
                     // do stuff
                     int i = cursor.getColumnIndex("event_id");
-                    //Log.i("RunnerBecomes", "value index: " + i);
                     int eventID = cursor.getInt(i);
 
-                    ContentResolver cr = getActivity().getContentResolver();
-                    ContentValues values = new ContentValues();
-                    Uri deleteUri = null;
-                    deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventID);
+                    Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventID);
                     int rows = getActivity().getContentResolver().delete(deleteUri, null, null);
                     Log.i(TAG, "Rows deleted: " + rows);
 
                     cursor.moveToNext();
                 }
 
+                mDataSource.deleteAllSchedules();
+
                 Toast.makeText(getActivity().getBaseContext(), "Deleted " + cursor.getCount() +
-                        "Events", Toast.LENGTH_LONG).show();
+                        " Events...", Toast.LENGTH_LONG).show();
 
             }
         });

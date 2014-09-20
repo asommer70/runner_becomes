@@ -33,6 +33,7 @@ public class ScheduleActivity extends Activity {
     public static int DayOfWeek;
     protected String sDay;
     protected String sMonth;
+    public static Calendar cal;
 
     public static final String TAG = RunDateTimePicker.class.getSimpleName();
 
@@ -75,20 +76,20 @@ public class ScheduleActivity extends Activity {
                 try {
                     Date date = format.parse(dtStart);
 
-                    Calendar c = Calendar.getInstance();
-                    c.setTime(date);
-                    DayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+                    cal = Calendar.getInstance();
+                    cal.setTime(date);
+                    DayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
 
                     // Week 2 just do Mon, Wed, Fri.
                     // Get start of week 2.
                     if (DayOfWeek != 2) {
                         int days = (7 - DayOfWeek + 2) % 7;
-                        c.add(Calendar.DAY_OF_YEAR, days);
+                        cal.add(Calendar.DAY_OF_YEAR, days);
                     } else {
-                      c.add(Calendar.DAY_OF_YEAR, 7);
+                      cal.add(Calendar.DAY_OF_YEAR, 7);
                     }
 
-                    Log.i(TAG, "next Monday: " + new SimpleDateFormat("yyyy-MM-dd").format(c.getTime()));
+                    Log.i(TAG, "next Monday: " + new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()));
 
 
                     //Log.i(TAG, dtStart);

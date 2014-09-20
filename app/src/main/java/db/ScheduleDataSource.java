@@ -110,11 +110,17 @@ public class ScheduleDataSource {
     }
 
     // Delete data from database.
-    public void deleteAll() {
+    public void deleteAllSchedules() {
         mDB.delete(
                 ScheduleHelper.TABLE_SCHEDULES, // table name
                 null,                           // where clause
                 null                            // where params
+        );
+
+        mDB.delete(
+                ScheduleHelper.TABLE_SETTINGS,
+                "name = 'scheduled'",
+                null
         );
     }
 }

@@ -14,6 +14,9 @@ import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TimePicker;
 
 import java.nio.channels.SelectableChannel;
@@ -38,13 +41,15 @@ public class RunDateTimePicker extends DialogFragment
     public static final String TAG = RunDateTimePicker.class.getSimpleName();
     protected ScheduleDataSource mDataSource;
     protected static Calendar beginTime = Calendar.getInstance();
-    protected static List<Integer> daysOfMonth = new ArrayList<Integer>();
+    protected static List<Calendar> daysOfMonth = new ArrayList<Calendar>();
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current time as the default values for the picker
         final Calendar c = Calendar.getInstance();
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
+
+        Log.i(TAG, "onCreateDialog...");
 
         // Create a new instance of TimePickerDialog and return it
         return new TimePickerDialog(getActivity(), this, hour, minute,
@@ -55,7 +60,10 @@ public class RunDateTimePicker extends DialogFragment
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         // Do something with the time chosen by the user
-        if (callCount == 1) {
+
+        Log.i(TAG, "onTimeSet...");
+
+        //if (callCount == 1) {
             mDataSource = new ScheduleDataSource(view.getContext());
             try {
                 mDataSource.open();
@@ -76,84 +84,101 @@ public class RunDateTimePicker extends DialogFragment
             // Sunday = 1;
             // Thursday = 5;
 
-            if (ScheduleActivity.DayOfWeek == 2) {
-                daysOfMonth.add(ScheduleActivity.DayOfMonth);
-                daysOfMonth.add(ScheduleActivity.DayOfMonth + 2);
-                daysOfMonth.add(ScheduleActivity.DayOfMonth + 4);
-            } else if (ScheduleActivity.DayOfWeek == 3) {
-                daysOfMonth.add(ScheduleActivity.DayOfMonth);
-                daysOfMonth.add(ScheduleActivity.DayOfMonth + 2);
-                daysOfMonth.add(ScheduleActivity.DayOfMonth + 3);
-            } else if (ScheduleActivity.DayOfWeek == 4) {
-                daysOfMonth.add(ScheduleActivity.DayOfMonth);
-                daysOfMonth.add(ScheduleActivity.DayOfMonth + 1);
-                daysOfMonth.add(ScheduleActivity.DayOfMonth + 2);
-            } else if (ScheduleActivity.DayOfWeek == 5) {
-                daysOfMonth.add(ScheduleActivity.DayOfMonth);
-                daysOfMonth.add(ScheduleActivity.DayOfMonth + 1);
-                daysOfMonth.add(ScheduleActivity.DayOfMonth + 2);
-            }
-            // Convert the day of week spacing to actual dates based on the
-            // ScheduleActivity.DayOfMonth attribute.
+            // Set the initial time to the date and time chosen.
+            beginTime.set(ScheduleActivity.Year,
+                    ScheduleActivity.Month,
+                    ScheduleActivity.DayOfMonth,
+                    hourOfDay, minute, 0);
 
-            EventHelper.getMonday(ScheduleActivity.DayOfWeek, beginTime);
-            EventHelper.buildList(3, beginTime);
+
+            if (ScheduleActivity.DayOfWeek == 2) {
+                daysOfMonth.add((Calendar) beginTime.clone());
+
+                beginTime.add(Calendar.DAY_OF_MONTH, 2);
+                daysOfMonth.add((Calendar) beginTime.clone());
+
+                beginTime.add(Calendar.DAY_OF_MONTH, 2);
+                daysOfMonth.add((Calendar) beginTime.clone());
+
+                Log.i(TAG, "1st week beginTime.DAY_OF_MONTH: " +
+                        beginTime.get(Calendar.DAY_OF_MONTH));
+            } else if (ScheduleActivity.DayOfWeek == 3) {
+                daysOfMonth.add((Calendar) beginTime.clone());
+
+                beginTime.add(Calendar.DAY_OF_MONTH, 2);
+                daysOfMonth.add((Calendar) beginTime.clone());
+
+                beginTime.add(Calendar.DAY_OF_MONTH, 1);
+                daysOfMonth.add((Calendar) beginTime.clone());
+            } else if (ScheduleActivity.DayOfWeek == 4 || ScheduleActivity.DayOfWeek == 5) {
+                daysOfMonth.add((Calendar) beginTime.clone());
+
+                beginTime.add(Calendar.DAY_OF_MONTH, 1);
+                daysOfMonth.add((Calendar) beginTime.clone());
+
+                beginTime.add(Calendar.DAY_OF_MONTH, 1);
+                daysOfMonth.add((Calendar) beginTime.clone());
+            }
+
+            EventHelper.buildListStepOne(beginTime);
+
             daysOfMonth.addAll(EventHelper.runDays);
 
-            // Create Calendar events.
-            // Might move this into it's own method.
-
-
             for (int i = 0; i < daysOfMonth.size(); i++) {
+                Log.i(TAG, "Event Date: " + new SimpleDateFormat("yyyy-MM-dd HH:MM:SS")
+                        .format(daysOfMonth.get(i).getTime()) );
+            }
+
+            // Create Calendar events.
+            int weekCounter = 0;
+            for (int i = 0; i < daysOfMonth.size(); i++) {
+
                 long calID = 1;
                 long startMillis = 0;
                 long endMillis = 0;
-                beginTime.set(ScheduleActivity.Year, ScheduleActivity.Month, daysOfMonth.get(i),
-                        hourOfDay - 1, minute, 0);
-                startMillis = beginTime.getTimeInMillis();
-                Calendar endTime = Calendar.getInstance();
-                endTime.set(ScheduleActivity.Year, ScheduleActivity.Month, daysOfMonth.get(i),
-                        hourOfDay - 1, minute + 25, 0);
-                endMillis = endTime.getTimeInMillis();
+                startMillis = daysOfMonth.get(i).getTimeInMillis();
 
+                Calendar endTime = (Calendar) daysOfMonth.get(i).clone();
+
+                if (weekCounter <= 2) {
+                    endTime.add(endTime.MINUTE, 25);
+                } else if (weekCounter >= 2 && weekCounter <= 5) {
+                    endTime.add(endTime.MINUTE, 30);
+                } else if (weekCounter > 5 && weekCounter <= 9) {
+                    endTime.add(endTime.MINUTE, 35);
+                } else if (weekCounter > 9) {
+                    endTime.add(endTime.MINUTE, 40);
+                }
+
+                endMillis = endTime.getTimeInMillis();
 
                 ContentResolver cr = getActivity().getContentResolver();
                 ContentValues values = new ContentValues();
                 values.put(CalendarContract.Events.DTSTART, startMillis);
                 values.put(CalendarContract.Events.DTEND, endMillis);
                 values.put(CalendarContract.Events.TITLE, "[RunnerBecomes] Run Time");
-                values.put(CalendarContract.Events.DESCRIPTION, "[Step " + stepNumber + "]\n\nTime to Run!");
+                values.put(CalendarContract.Events.DESCRIPTION, "[Step " + stepNumber +
+                        "]\n\nTime to Run!");
                 values.put(CalendarContract.Events.CALENDAR_ID, calID);
-                values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().toString());
+                values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault()
+                        .toString());
                 Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
 
                 long eventID = Long.parseLong(uri.getLastPathSegment());
 
-                // Save the eventIDs into the SQLite db.
                 Log.i(TAG, "event id: " + eventID);
 
-                // Update the scheduled preference.
-                //PreferenceManager.setDefaultValues(this.getActivity(), R.xml.preferences, true);
-                //SharedPreferences preferences = this.getActivity().getSharedPreferences("preferences", 0);
-                //SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-
-                /*SharedPreferences preferences = this.getActivity().getSharedPreferences("pref_general", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean("schedule", true);
-                editor.apply();
-
-                Log.i(TAG, "schedule preference: " + preferences.getBoolean("scheduled", false));*/
-
+                // Save the eventIDs into the SQLite db.
                 if (! mDataSource.checkScheduled()) {
                     mDataSource.insertScheduleSetting("true");
                 }
-
                 mDataSource.insertEvent(
                         hourOfDay - 1,
                         minute,
                         new SimpleDateFormat("yyyy-MM-dd").format(beginTime.getTime()),
                         eventID
                 );
+                weekCounter++;
             }
 
             // Set alarm as well as calendar notification.
@@ -162,7 +187,7 @@ public class RunDateTimePicker extends DialogFragment
 
             mDataSource.close();
             getActivity().finish();
-        }
+        //}
 
         callCount++; // Increment Call count cause I guess it's called twice for some reason.
     }
