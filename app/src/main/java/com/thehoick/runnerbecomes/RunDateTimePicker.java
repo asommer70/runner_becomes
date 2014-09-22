@@ -2,6 +2,9 @@ package com.thehoick.runnerbecomes;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -11,6 +14,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.AlarmClock;
 import android.provider.CalendarContract;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -49,146 +53,168 @@ public class RunDateTimePicker extends DialogFragment
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
 
-        Log.i(TAG, "onCreateDialog...");
+        //Log.i(TAG, "onCreateDialog...");
 
         // Create a new instance of TimePickerDialog and return it
         return new TimePickerDialog(getActivity(), this, hour, minute,
                 DateFormat.is24HourFormat(getActivity()));
     }
 
-    int callCount = 0;   //To track number of calls to onTimeSet()
-
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         // Do something with the time chosen by the user
 
-        Log.i(TAG, "onTimeSet...");
+        //Log.i(TAG, "onTimeSet...");
 
-        //if (callCount == 1) {
-            mDataSource = new ScheduleDataSource(view.getContext());
-            try {
-                mDataSource.open();
-            } catch (SQLException e) {
-                e.printStackTrace();
+        mDataSource = new ScheduleDataSource(view.getContext());
+        try {
+            mDataSource.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        int stepNumber = 1;
+
+        // Choose run duration.
+
+        // Week 1 = 3 20-25 minute walks.
+        // Week 2 = 3 25-30 minute walks.
+        // Optional Week 3 = 4 30-35 minute walks.
+        // Optional Week 4 = 4 35-40 minute walks.
+
+        // Setup spacing of run days.
+        // Sunday = 1;
+        // Thursday = 5;
+
+        // Set the initial time to the date and time chosen.
+        beginTime.set(ScheduleActivity.Year,
+                ScheduleActivity.Month,
+                ScheduleActivity.DayOfMonth,
+                hourOfDay, minute, 0);
+
+
+        if (ScheduleActivity.DayOfWeek == 2) {
+            daysOfMonth.add((Calendar) beginTime.clone());
+
+            beginTime.add(Calendar.DAY_OF_MONTH, 2);
+            daysOfMonth.add((Calendar) beginTime.clone());
+
+            beginTime.add(Calendar.DAY_OF_MONTH, 2);
+            daysOfMonth.add((Calendar) beginTime.clone());
+
+            Log.i(TAG, "1st week beginTime.DAY_OF_MONTH: " +
+                    beginTime.get(Calendar.DAY_OF_MONTH));
+        } else if (ScheduleActivity.DayOfWeek == 3) {
+            daysOfMonth.add((Calendar) beginTime.clone());
+
+            beginTime.add(Calendar.DAY_OF_MONTH, 2);
+            daysOfMonth.add((Calendar) beginTime.clone());
+
+            beginTime.add(Calendar.DAY_OF_MONTH, 1);
+            daysOfMonth.add((Calendar) beginTime.clone());
+        } else if (ScheduleActivity.DayOfWeek == 4 || ScheduleActivity.DayOfWeek == 5) {
+            daysOfMonth.add((Calendar) beginTime.clone());
+
+            beginTime.add(Calendar.DAY_OF_MONTH, 1);
+            daysOfMonth.add((Calendar) beginTime.clone());
+
+            beginTime.add(Calendar.DAY_OF_MONTH, 1);
+            daysOfMonth.add((Calendar) beginTime.clone());
+        }
+
+        EventHelper.buildListStepOne(beginTime);
+
+        daysOfMonth.addAll(EventHelper.runDays);
+
+        for (int i = 0; i < daysOfMonth.size(); i++) {
+            Log.i(TAG, "Event Date: " + new SimpleDateFormat("yyyy-MM-dd HH:MM:SS")
+                    .format(daysOfMonth.get(i).getTime()) );
+        }
+
+        // Create Calendar events.
+        int weekCounter = 0;
+        for (int i = 0; i < daysOfMonth.size(); i++) {
+
+            long calID = 1;
+            long startMillis = 0;
+            long endMillis = 0;
+            startMillis = daysOfMonth.get(i).getTimeInMillis();
+
+            Calendar endTime = (Calendar) daysOfMonth.get(i).clone();
+
+            // Calculate Event duration.
+            if (weekCounter <= 2) {
+                endTime.add(endTime.MINUTE, 25);
+            } else if (weekCounter >= 2 && weekCounter <= 5) {
+                endTime.add(endTime.MINUTE, 30);
+            } else if (weekCounter > 5 && weekCounter <= 9) {
+                endTime.add(endTime.MINUTE, 35);
+            } else if (weekCounter > 9) {
+                endTime.add(endTime.MINUTE, 40);
             }
 
-            int stepNumber = 1;
+            endMillis = endTime.getTimeInMillis();
 
-            // Choose run duration.
+            ContentResolver cr = getActivity().getContentResolver();
+            ContentValues values = new ContentValues();
+            values.put(CalendarContract.Events.DTSTART, startMillis);
+            values.put(CalendarContract.Events.DTEND, endMillis);
+            values.put(CalendarContract.Events.TITLE, "[RunnerBecomes] Run Time");
+            values.put(CalendarContract.Events.DESCRIPTION, "[Step " + stepNumber +
+                    "]\n\nTime to Run!");
+            values.put(CalendarContract.Events.CALENDAR_ID, calID);
+            values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault()
+                    .toString());
+            Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
 
-            // Week 1 = 3 20-25 minute walks.
-            // Week 2 = 3 25-30 minute walks.
-            // Optional Week 3 = 4 30-35 minute walks.
-            // Optional Week 4 = 4 35-40 minute walks.
+            long eventID = Long.parseLong(uri.getLastPathSegment());
 
-            // Setup spacing of run days.
-            // Sunday = 1;
-            // Thursday = 5;
+            ContentResolver crReminder = getActivity().getContentResolver();
+            ContentValues valuesReminder = new ContentValues();
+            valuesReminder.put(CalendarContract.Reminders.MINUTES, 5);
+            valuesReminder.put(CalendarContract.Reminders.EVENT_ID, eventID);
+            valuesReminder.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT);
+            Uri uriReminders = crReminder.insert(CalendarContract.Reminders.CONTENT_URI, valuesReminder);
 
-            // Set the initial time to the date and time chosen.
-            beginTime.set(ScheduleActivity.Year,
-                    ScheduleActivity.Month,
-                    ScheduleActivity.DayOfMonth,
-                    hourOfDay, minute, 0);
+            Log.i(TAG, "event id: " + eventID);
 
-
-            if (ScheduleActivity.DayOfWeek == 2) {
-                daysOfMonth.add((Calendar) beginTime.clone());
-
-                beginTime.add(Calendar.DAY_OF_MONTH, 2);
-                daysOfMonth.add((Calendar) beginTime.clone());
-
-                beginTime.add(Calendar.DAY_OF_MONTH, 2);
-                daysOfMonth.add((Calendar) beginTime.clone());
-
-                Log.i(TAG, "1st week beginTime.DAY_OF_MONTH: " +
-                        beginTime.get(Calendar.DAY_OF_MONTH));
-            } else if (ScheduleActivity.DayOfWeek == 3) {
-                daysOfMonth.add((Calendar) beginTime.clone());
-
-                beginTime.add(Calendar.DAY_OF_MONTH, 2);
-                daysOfMonth.add((Calendar) beginTime.clone());
-
-                beginTime.add(Calendar.DAY_OF_MONTH, 1);
-                daysOfMonth.add((Calendar) beginTime.clone());
-            } else if (ScheduleActivity.DayOfWeek == 4 || ScheduleActivity.DayOfWeek == 5) {
-                daysOfMonth.add((Calendar) beginTime.clone());
-
-                beginTime.add(Calendar.DAY_OF_MONTH, 1);
-                daysOfMonth.add((Calendar) beginTime.clone());
-
-                beginTime.add(Calendar.DAY_OF_MONTH, 1);
-                daysOfMonth.add((Calendar) beginTime.clone());
+            // Save the eventIDs into the SQLite db.
+            if (! mDataSource.checkScheduled()) {
+                mDataSource.insertScheduleSetting("true");
             }
+            mDataSource.insertEvent(
+                    hourOfDay - 1,
+                    minute,
+                    new SimpleDateFormat("yyyy-MM-dd").format(daysOfMonth.get(i).getTime()),
+                    eventID
+            );
 
-            EventHelper.buildListStepOne(beginTime);
+/*            // Set alarm as well as calendar notification.
+            Intent intent = new Intent(AlarmClock.ACTION_SET_ALARM)
+                    .putExtra(AlarmClock.EXTRA_MESSAGE, R.string.stepOneAlarmMessage)
+                    .putExtra(AlarmClock.EXTRA_HOUR, daysOfMonth.get(i).get(Calendar.HOUR))
+                    .putExtra(AlarmClock.EXTRA_MINUTES, daysOfMonth.get(i).get(Calendar.MINUTE))
+                    .putExtra(AlarmClock.EXTRA_DAYS, daysOfMonth.get(i).get(Calendar.DAY_OF_WEEK))
+                    .putExtra(AlarmClock.EXTRA_SKIP_UI, true)
+                    .putExtra(AlarmClock.EXTRA_VIBRATE, true);
+            if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                startActivity(intent);
+            }*/
 
-            daysOfMonth.addAll(EventHelper.runDays);
+            weekCounter++;
+        }
 
-            for (int i = 0; i < daysOfMonth.size(); i++) {
-                Log.i(TAG, "Event Date: " + new SimpleDateFormat("yyyy-MM-dd HH:MM:SS")
-                        .format(daysOfMonth.get(i).getTime()) );
-            }
+        // Populate the whole program.
 
-            // Create Calendar events.
-            int weekCounter = 0;
-            for (int i = 0; i < daysOfMonth.size(); i++) {
+        Button scheduleButton = (Button) ScheduleFragment.relativeLayout
+                .findViewById(R.id.editSchedule);
+        scheduleButton.setText("Edit Schedule");
+        Button deleteButton = (Button) ScheduleFragment.relativeLayout
+                .findViewById(R.id.removeSchedule);
+        deleteButton.setVisibility(View.VISIBLE);
 
-                long calID = 1;
-                long startMillis = 0;
-                long endMillis = 0;
-                startMillis = daysOfMonth.get(i).getTimeInMillis();
+        ScheduleFragment.mScheduled = true;
 
-                Calendar endTime = (Calendar) daysOfMonth.get(i).clone();
-
-                if (weekCounter <= 2) {
-                    endTime.add(endTime.MINUTE, 25);
-                } else if (weekCounter >= 2 && weekCounter <= 5) {
-                    endTime.add(endTime.MINUTE, 30);
-                } else if (weekCounter > 5 && weekCounter <= 9) {
-                    endTime.add(endTime.MINUTE, 35);
-                } else if (weekCounter > 9) {
-                    endTime.add(endTime.MINUTE, 40);
-                }
-
-                endMillis = endTime.getTimeInMillis();
-
-                ContentResolver cr = getActivity().getContentResolver();
-                ContentValues values = new ContentValues();
-                values.put(CalendarContract.Events.DTSTART, startMillis);
-                values.put(CalendarContract.Events.DTEND, endMillis);
-                values.put(CalendarContract.Events.TITLE, "[RunnerBecomes] Run Time");
-                values.put(CalendarContract.Events.DESCRIPTION, "[Step " + stepNumber +
-                        "]\n\nTime to Run!");
-                values.put(CalendarContract.Events.CALENDAR_ID, calID);
-                values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault()
-                        .toString());
-                Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
-
-                long eventID = Long.parseLong(uri.getLastPathSegment());
-
-                Log.i(TAG, "event id: " + eventID);
-
-                // Save the eventIDs into the SQLite db.
-                if (! mDataSource.checkScheduled()) {
-                    mDataSource.insertScheduleSetting("true");
-                }
-                mDataSource.insertEvent(
-                        hourOfDay - 1,
-                        minute,
-                        new SimpleDateFormat("yyyy-MM-dd").format(beginTime.getTime()),
-                        eventID
-                );
-                weekCounter++;
-            }
-
-            // Set alarm as well as calendar notification.
-
-            // Populate the whole program.
-
-            mDataSource.close();
-            getActivity().finish();
-        //}
-
-        callCount++; // Increment Call count cause I guess it's called twice for some reason.
+        mDataSource.close();
+        getActivity().finish();
     }
 }

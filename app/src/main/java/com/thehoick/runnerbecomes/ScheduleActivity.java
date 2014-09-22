@@ -89,11 +89,11 @@ public class ScheduleActivity extends Activity {
                       cal.add(Calendar.DAY_OF_YEAR, 7);
                     }
 
-                    Log.i(TAG, "next Monday: " + new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()));
+                    //Log.i(TAG, "next Monday: " + new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()));
 
 
                     //Log.i(TAG, dtStart);
-                    Log.i(TAG, "dayOfWeek: " + DayOfWeek);
+                    //Log.i(TAG, "dayOfWeek: " + DayOfWeek);
 
                     WeekDaysLeft = 7 - DayOfWeek;
 

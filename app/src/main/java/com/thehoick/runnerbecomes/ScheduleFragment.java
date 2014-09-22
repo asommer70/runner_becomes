@@ -48,12 +48,14 @@ public class ScheduleFragment extends Fragment {
     private String mParam2;
 
     private Activity mActivity = this.getActivity();
-    public Boolean mScheduled = null;
+    public static Boolean mScheduled = null;
     SharedPreferences mPrefs;
     public static final String PREFS = "preferences.xml";
 
     private OnFragmentInteractionListener mListener;
     protected ScheduleDataSource mDataSource;
+
+    public static RelativeLayout relativeLayout;
 
     public static final String TAG = ScheduleFragment.class.getSimpleName();
 
@@ -114,7 +116,7 @@ public class ScheduleFragment extends Fragment {
 
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_schedule, container, false);
-        final RelativeLayout mRelativeLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_schedule,
+        relativeLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_schedule,
                 container, false);
 
         SharedPreferences preferences = this.getActivity().getSharedPreferences("pref_general", Context.MODE_PRIVATE);
@@ -133,8 +135,8 @@ public class ScheduleFragment extends Fragment {
         mDataSource.close();
 
         // Change button text if there are no RunnerBecomes events.
-        Button button = (Button) mRelativeLayout.findViewById(R.id.editSchedule);
-        Button removeScheduleButton = (Button) mRelativeLayout.findViewById(R.id.removeSchedule);
+        Button button = (Button) relativeLayout.findViewById(R.id.editSchedule);
+        Button removeScheduleButton = (Button) relativeLayout.findViewById(R.id.removeSchedule);
         removeScheduleButton.setVisibility(View.INVISIBLE);
         if (mScheduled) {
             button.setText("Edit Schedule");
@@ -146,7 +148,7 @@ public class ScheduleFragment extends Fragment {
             public void onClick(View v) {
                 // here you set what you want to do when user clicks your button,
                 // e.g. launch a new activity
-                Log.d("RunnerBecomes", "scheduled: " + mScheduled);
+                //Log.d("RunnerBecomes", "scheduled: " + mScheduled);
 
                 getActivity().setProgressBarIndeterminate(true);
 
@@ -194,23 +196,30 @@ public class ScheduleFragment extends Fragment {
                 Toast.makeText(getActivity().getBaseContext(), "Deleted " + cursor.getCount() +
                         " Events...", Toast.LENGTH_LONG).show();
 
+                // Change button text if there are no RunnerBecomes events.
+                Button button = (Button) relativeLayout.findViewById(R.id.editSchedule);
+                Button removeScheduleButton = (Button) relativeLayout.findViewById(R.id.removeSchedule);
+                removeScheduleButton.setVisibility(View.INVISIBLE);
+                button.setText("Add Schedule");
+
+                mScheduled = false;
             }
         });
 
         // after you've done all your manipulation, return your layout to be shown
-        return mRelativeLayout;
+        return relativeLayout;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.i("RunnerBecomes", "Resume ScheduleFragment");
+/*        Log.i("RunnerBecomes", "Resume ScheduleFragment");
         // Change button text if there are no RunnerBecomes events.
         Log.i("RunnerBecomes", "mScheduled: " + mScheduled);
         if (mScheduled) {
             Button button = (Button) getView().findViewById(R.id.editSchedule);
             button.setText("Edit Schedule");
-        }
+        }*/
 
     }
 

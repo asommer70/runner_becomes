@@ -73,5 +73,6 @@
     <string name="too_late_message">Please choose another day.\n\nIn order to form a running habit
         you need to practice at least <b>3</b> times a week.\n\nMaybe Monday of next week would be
         better?</string>
+    <string name="stepOneAlarmMessage">[RunnerBecomes] Step 1</string>
 
 </resources>
